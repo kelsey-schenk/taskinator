@@ -7,7 +7,9 @@ var tasksToDoEl = document.querySelector("#tasks-to-do");
 // Important to place this before the event listener
 // Otherwise we'd receive an error that createTaskHandler() isn't defined because we'd be calling the funciton before it
 // was defined
-var createTaskHandler = function(event) { 
+
+// Changed from createTaskHandler to taskFormHandler
+var taskFormHandler = function(event) { 
 
     event.preventDefault(); 
     // When we use square brackets in a selector, we're trying to select
@@ -19,8 +21,27 @@ var createTaskHandler = function(event) {
     var taskNameInput = document.querySelector("input[name='task-name']").value;
     // Adds task type to task added
     var taskTypeInput = document.querySelector("select[name='task-type']").value;
-    console.log(taskTypeInput);
+
+    // package up data as an object
+    var taskDataObj = {
+        name: taskNameInput,
+        type: taskTypeInput,
+    };
+
+    // send it as an argument to createTaskEl
+    createTaskEl(taskDataObj);
+    };
+
+    // Holds the code that creates a new task HTML element
+    // Only one parameter (taskDataObj) because using two could
+    // be limiting in the future. Instead of having to add another
+    // parameter to the function everytime we want to use more data,
+    // function can be set up to accept an object as an argument
+    var createTaskEl = function(taskDataObj) {
     // Create list item
+    // We created the <li> element to hold the whole task (listItemEl)
+    // but instead of writing the task's content right to it we created
+    // a <div> to hold the content (taskInfoEl)
     var listItemEl = document.createElement("li"); 
     listItemEl.className = "task-item"; 
 
@@ -29,18 +50,19 @@ var createTaskHandler = function(event) {
     // give it a class name
     taskInfoEl.className = "task-info";
     // add HTML content to div
-    taskInfoEl.innerHTML = "<h3 class='task name'>" + taskNameInput + "</h3><span class='task-type'>" + taskTypeInput + "</span>";
+    taskInfoEl.innerHTML = "<h3 class='task name'>" + taskDataObj.name + "</h3><span class='task-type'>" + taskDataObj.type + "</span>";
     listItemEl.appendChild(taskInfoEl);
     // Add entire list item to list
     tasksToDoEl.appendChild(listItemEl); 
-    }; 
+
+    }
 
 
 // Changed the variable at the top, also has to be changed here
 // Script now finds the <form> element in the HTML
 // Since the entire form is being targeted instead of only button, can't use "click" anymore 
 // Submit is a form specific event (4.2.5)
-formEl.addEventListener("submit", createTaskHandler);
+formEl.addEventListener("submit", taskFormHandler);
 
 
 
